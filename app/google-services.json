@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "23028412109",
+    "firebase_url": "https://perprint-project.firebaseio.com",
+    "project_id": "perprint-project",
+    "storage_bucket": "perprint-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:23028412109:android:12076ac122f709590c8384",
+        "android_client_info": {
+          "package_name": "com.example.petprint"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "23028412109-pvemk102ilstk9sd5v40lifhq66902qf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.petprint",
+            "certificate_hash": "143d14a3404b9919801a97391ae882cbaf48f900"
+          }
+        },
+        {
+          "client_id": "23028412109-ugastnh5pnffog5666pf9vau322btave.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVes_gZyyYhwMcNv6FzY8_ni0fJTPjlRA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "23028412109-ugastnh5pnffog5666pf9vau322btave.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

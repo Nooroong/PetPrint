@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PetPrint</string>
+    <string name="title_activity_map_test">Map</string>
+    <string name="title_activity_maps">Map</string>
+</resources>

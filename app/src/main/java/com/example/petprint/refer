@@ -1,0 +1,27 @@
+*전국동물보호센터정보표준데이터
+https://www.data.go.kr/data/15025454/standard.do
+
+*전국도시공원정보표준데이터
+https://www.data.go.kr/data/15012890/standard.do
+
+*지도 제작 참고 사이트
+
+https://www.youtube.com/watch?v=d-Dkb2bmcQs (API 키 생성 및 함수 설명)
+https://webnautes.tistory.com/647 (키 생성 최신 버전)
+https://www.raywenderlich.com/230-introduction-to-google-maps-api-for-android-with-kotlin (핵심 부분)
+https://gogoadl.tistory.com/14 (DB에서 정보 가져와 지도에 찍기)
+https://developers.google.com/maps/documentation/android-sdk/marker?hl=ko (핀 디자인)
+
+첫 번째 링크 영상 따라하지 말고 Google Map Activity 눌러서 만드는게 편함.
+
+*res\values\google_maps_api.xml 파일 참고
+
+*인터넷 연결 확인
+https://youngest-programming.tistory.com/32
+
+*엑셀 데이터 가져오기
+https://hamzzibari.tistory.com/120
+(글 안에 걸린 링크들 다 읽어야 제대로 사용할 수 있음)
+주의)엑셀 파일의 확장자는 .xls로 변경해줘야 한다. 이유는 나도 모름.
+.xls로 변경한 공공 데이터 파일 -> 엑셀 데이터를 firestore에 옮김 -> firestore의 데이터를 바탕으로 핀을 그림
+이 데이터들을 recyclerView로 표현할지는 나중에 생각해보기
