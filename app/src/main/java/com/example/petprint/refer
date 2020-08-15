@@ -23,6 +23,7 @@ https://youngest-programming.tistory.com/32
 https://hamzzibari.tistory.com/120
 (글 안에 걸린 링크들 다 읽어야 제대로 사용할 수 있음)
 주의)엑셀 파일의 확장자는 .xls로 변경해줘야 한다.
+주의)중간에 빈 셀이 있으면 데이터가 당겨져서 저장될 수 있음. 빈 셀에 아무 데이터나 넣어서 방지해야함.
 .xls로 변경한 공공 데이터 파일 -> 엑셀 데이터를 firestore에 옮김 -> firestore의 데이터를 바탕으로 핀을 그림
 이 데이터들을 recyclerView로 표현할지는 나중에 생각해보기
 

@@ -17,7 +17,7 @@ import java.io.InputStream
 
 class ExceltoFirestore : AppCompatActivity() {
     //cloud firestore 초기화, 콜렉션은 여기서 해도 되고 아래에서 정의해도 됩니다.
-    val quiz_db = FirebaseFirestore.getInstance().collection("Gangbuk") //Seoul 컬렉션과 연결(?)
+    val quiz_db = FirebaseFirestore.getInstance().collection("Jungnang") //Seoul 컬렉션과 연결(?)
     val dataToSave = mutableMapOf<String, String>() //각 다큐먼트의 필드
     var items: MutableList<SearchData> = mutableListOf() //엑셀 파일의 내용을 저장하는 리스트
 
@@ -62,7 +62,7 @@ class ExceltoFirestore : AppCompatActivity() {
             // assetManager 초기 설정
             val assetManager = assets
             //  엑셀 시트 열기
-            myInput = assetManager.open("서울특별시_강북구_도시공원정보_20190604.xls")
+            myInput = assetManager.open("서울특별시_중랑구_도시공원정보_20190924.xls")
             // POI File System 객체 만들기
             val myFileSystem = POIFSFileSystem(myInput)
             //워크 북
@@ -86,7 +86,7 @@ class ExceltoFirestore : AppCompatActivity() {
                     //열 넘버 변수 만들기
                     var colno = 0
 
-                    //건드릴 부분 1. 빼내고자 하는 열의 수에 맞춰 변수를 선언한다.
+                    //건드릴 부분. 빼내고자 하는 열의 수에 맞춰 변수를 선언한다.
                     //공원명, 공원구분, 주소(도로명, 지번), 위도, 경도, 공원보유시설, 전화번호
                     var parkName = ""
                     var parkType = ""
@@ -102,23 +102,24 @@ class ExceltoFirestore : AppCompatActivity() {
                     while (cellIter.hasNext()) {
                         val myCell = cellIter.next() as HSSFCell
 
-                        if(colno == 1) //2번째 열이라면,
+                        if(colno === 1) //2번째 열이라면,
                             parkName = myCell.toString() //대충 셀의 내용을 꺼내와 String으로 저장한다는 의미인듯
-                        else if (colno == 2)
+                        else if (colno === 2)
                             parkType = myCell.toString()
-                        else if (colno == 3)
+                        else if (colno === 3)
                             parkAddress1 = myCell.toString()
-                        else if (colno == 4)
+                        else if (colno === 4)
                             parkAddress2 = myCell.toString()
-                        else if (colno == 5)
+                        else if (colno === 5)
                             parkLat = myCell.toString()
-                        else if (colno == 6)
+                        else if (colno === 6)
                             parkLng = myCell.toString()
-                        else if (colno == 15)
+                        else if (colno === 15)
                             parkPhone = myCell.toString()
-                        else if (colno == 17)
+                        else if (colno === 17)
                             parkEquip = myCell.toString()
 
+                        Log.e("colnoNum", "" + colno + "\n")
                         colno++
                     }
 
@@ -132,7 +133,7 @@ class ExceltoFirestore : AppCompatActivity() {
                 rowno++
             }
 
-//            Log.e("checking", " items: " + items)
+            Log.e("checking", " items: " + items)
 
         } catch (e: Exception) {
             Toast.makeText(this, "에러 발생", Toast.LENGTH_LONG).show()

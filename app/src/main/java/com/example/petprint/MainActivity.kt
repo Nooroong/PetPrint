@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
 
-
     }
 
     /**
@@ -40,35 +39,46 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         var i = 0
+        val collection = arrayOf<String>("Gangbuk", "Jungnang", "Nowon", "Seongbuk")
 
-        db.collection("Seoul")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    i++
-                    Log.d("hangnyang", "${document.id} => ${document.data}")
+        for (path in collection) {
+            db.collection(path)
+                .get()
+                .addOnSuccessListener { result ->
+                    for (document in result) {
+                        i++
+//                        Log.d("mapPoint", "${document.id} => ${document.data}")
 
-                    // Add a marker in Sydney and move the camera
-                    //아니 이게 왜 되는거야
-                    var location = LatLng(document.data["lat"].toString().toDouble(), document.data["lng"].toString().toDouble()) //매개변수: 위도, 경도
+                        // Add a marker in Sydney and move the camera
+                        //아니 이게 왜 되는거야
+                        var location = LatLng(
+                            document.data["lat"].toString().toDouble(),
+                            document.data["lng"].toString().toDouble()
+                        ) //매개변수: 위도, 경도
 
-                    val markerOptions = MarkerOptions() //핀
-                    markerOptions.title(document.id) //주 내용
-                    markerOptions.snippet(document.data["snippet"] as String) //세부 내용
-                    markerOptions.position(location) //위치(위도, 경도 값)
-                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                    googleMap.addMarker(markerOptions) //핀 추가
+                        val markerOptions = MarkerOptions() //핀
+                        markerOptions.title(document.id) //주 내용
+                        markerOptions.snippet(document.data["snippet"] as String) //세부 내용
+                        markerOptions.position(location) //위치(위도, 경도 값)
+                        markerOptions.icon(
+                            BitmapDescriptorFactory.defaultMarker(
+                                BitmapDescriptorFactory.HUE_AZURE
+                            )
+                        )
+                        googleMap.addMarker(markerOptions) //핀 추가
 
-                    //해당 핀으로 카메라 이동
-                    //아래 코드가 isSBSettingEnabled false 오류를 일으킴
-                    //for문을 통해 여러번 실행하면 안 되는 듯
-                    if(result.size() <= i) //마지막 핀으로 카메라 이동
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16F))
+                        //해당 핀으로 카메라 이동
+                        //아래 코드가 isSBSettingEnabled false 오류를 일으킴
+                        //for문을 통해 여러번 실행하면 안 되는 듯
+                        if (result.size() <= i) //마지막 핀으로 카메라 이동
+                            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16F))
+                    }
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("hangnyang", "Error getting documents.", exception)
-            }
+                .addOnFailureListener { exception ->
+                    Log.w("mapPoint", "Error getting documents.", exception)
+                }
+        }
+
 
         val uiSettings: UiSettings = googleMap.uiSettings
         uiSettings.isZoomControlsEnabled = true //확대, 축소 버튼
