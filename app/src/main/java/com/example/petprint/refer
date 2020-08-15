@@ -22,6 +22,6 @@ https://youngest-programming.tistory.com/32
 *엑셀 데이터 가져오기
 https://hamzzibari.tistory.com/120
 (글 안에 걸린 링크들 다 읽어야 제대로 사용할 수 있음)
-주의)엑셀 파일의 확장자는 .xls로 변경해줘야 한다. 이유는 나도 모름.
+주의)엑셀 파일의 확장자는 .xls로 변경해줘야 한다.
 .xls로 변경한 공공 데이터 파일 -> 엑셀 데이터를 firestore에 옮김 -> firestore의 데이터를 바탕으로 핀을 그림
 이 데이터들을 recyclerView로 표현할지는 나중에 생각해보기
