@@ -13,6 +13,7 @@ import java.io.InputStream
 
 //엑셀 파일의 데이터를 추출해서 firestore에 저장하는 코드
 //excel -> mutableList -> mutableMap -> firestore
+//https://hamzzibari.tistory.com/120 (이곳의 코드를 참고하였습니다.)
 
 class ExceltoFirestore : AppCompatActivity() {
     //cloud firestore 초기화, 콜렉션은 여기서 해도 되고 아래에서 정의해도 됩니다.
