@@ -17,9 +17,10 @@ import java.io.InputStream
 
 class ExceltoFirestore : AppCompatActivity() {
     //cloud firestore 초기화, 콜렉션은 여기서 해도 되고 아래에서 정의해도 됩니다.
-    val quiz_db = FirebaseFirestore.getInstance().collection("Seoul") //Seoul 컬렉션과 연결(?)
+    val quiz_db = FirebaseFirestore.getInstance().collection("Gangbuk") //Seoul 컬렉션과 연결(?)
     val dataToSave = mutableMapOf<String, String>() //각 다큐먼트의 필드
     var items: MutableList<SearchData> = mutableListOf() //엑셀 파일의 내용을 저장하는 리스트
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,17 +101,23 @@ class ExceltoFirestore : AppCompatActivity() {
                     //열 반복문
                     while (cellIter.hasNext()) {
                         val myCell = cellIter.next() as HSSFCell
-                        when {
-                            //2번째 열이라면,
-                            colno === 1 -> parkName = myCell.toString() //대충 셀의 내용을 꺼내와 String으로 저장한다는 의미인듯
-                            colno === 2 -> parkType = myCell.toString()
-                            colno === 3 -> parkAddress1 = myCell.toString()
-                            colno === 4 -> parkAddress2 = myCell.toString()
-                            colno === 5 -> parkLat = myCell.toString()
-                            colno === 6 -> parkLng = myCell.toString()
-                            colno === 15 -> parkPhone = myCell.toString()
-                            colno === 17 -> parkEquip = myCell.toString()
-                        }
+
+                        if(colno == 1) //2번째 열이라면,
+                            parkName = myCell.toString() //대충 셀의 내용을 꺼내와 String으로 저장한다는 의미인듯
+                        else if (colno == 2)
+                            parkType = myCell.toString()
+                        else if (colno == 3)
+                            parkAddress1 = myCell.toString()
+                        else if (colno == 4)
+                            parkAddress2 = myCell.toString()
+                        else if (colno == 5)
+                            parkLat = myCell.toString()
+                        else if (colno == 6)
+                            parkLng = myCell.toString()
+                        else if (colno == 15)
+                            parkPhone = myCell.toString()
+                        else if (colno == 17)
+                            parkEquip = myCell.toString()
 
                         colno++
                     }
