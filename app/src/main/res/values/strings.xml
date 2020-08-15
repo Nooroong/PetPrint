@@ -2,4 +2,6 @@
     <string name="app_name">PetPrint</string>
     <string name="title_activity_map_test">Map</string>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_walking">Map</string>
+    <string name="title_activity_walking_path">Map</string>
 </resources>
