@@ -25,3 +25,6 @@ https://hamzzibari.tistory.com/120
 주의)엑셀 파일의 확장자는 .xls로 변경해줘야 한다.
 .xls로 변경한 공공 데이터 파일 -> 엑셀 데이터를 firestore에 옮김 -> firestore의 데이터를 바탕으로 핀을 그림
 이 데이터들을 recyclerView로 표현할지는 나중에 생각해보기
+
+*깃허브 commit이 안 되는 경우
+https://hydroponicglass.tistory.com/161

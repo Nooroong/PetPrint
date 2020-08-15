@@ -14,14 +14,12 @@ import java.io.InputStream
 //엑셀 파일의 데이터를 추출해서 firestore에 저장하는 코드
 //excel -> mutableList -> mutableMap -> firestore
 //https://hamzzibari.tistory.com/120 (이곳의 코드를 참고하였습니다.)
-//깃 업로드 테스트
 
 class ExceltoFirestore : AppCompatActivity() {
     //cloud firestore 초기화, 콜렉션은 여기서 해도 되고 아래에서 정의해도 됩니다.
     val quiz_db = FirebaseFirestore.getInstance().collection("Seoul") //Seoul 컬렉션과 연결(?)
     val dataToSave = mutableMapOf<String, String>() //각 다큐먼트의 필드
     var items: MutableList<SearchData> = mutableListOf() //엑셀 파일의 내용을 저장하는 리스트
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +32,12 @@ class ExceltoFirestore : AppCompatActivity() {
         //저장할 데이터를 만들어줍니다. (dataToSave는 mutableMapOf로 정의해줬습니다)
         for (i in 0 until items.size) {
             dataToSave.put("snippet", items[i].parkType)
+            dataToSave.put("address(road)", items[i].parkAddress1)
+            dataToSave.put("address(lot)", items[i].parkAddress2)
             dataToSave.put("lat", items[i].parkLat)
             dataToSave.put("lng", items[i].parkLng)
+            dataToSave.put("phoneNumber", items[i].parkPhone)
+            dataToSave.put("Equipment", items[i].parkEquip)
 
             //저는 여러개의 다큐먼트가 필요해서 다큐먼트도 유동적으로 생성되게 했습니다.
             //아래 코드는 dataToSave를 필드로 하여 다큐먼트를 새로 생성한다.
@@ -59,7 +61,7 @@ class ExceltoFirestore : AppCompatActivity() {
             // assetManager 초기 설정
             val assetManager = assets
             //  엑셀 시트 열기
-            myInput = assetManager.open("서울특별시_노원구_도시공원정보_20200714_1594723335305_28282.xls")
+            myInput = assetManager.open("서울특별시_강북구_도시공원정보_20190604.xls")
             // POI File System 객체 만들기
             val myFileSystem = POIFSFileSystem(myInput)
             //워크 북
@@ -84,31 +86,37 @@ class ExceltoFirestore : AppCompatActivity() {
                     var colno = 0
 
                     //건드릴 부분 1. 빼내고자 하는 열의 수에 맞춰 변수를 선언한다.
+                    //공원명, 공원구분, 주소(도로명, 지번), 위도, 경도, 공원보유시설, 전화번호
                     var parkName = ""
                     var parkType = ""
+                    var parkAddress1 = "" //도로명 주소
+                    var parkAddress2 = "" //지번 주소
                     var parkLat = "" //firestore에는 Double 타입이 없어서 그냥 String으로 넣고 꺼낼 때 캐스팅하면 될듯
                     var parkLng = ""
+                    var parkPhone = ""
+                    var parkEquip = ""
+
 
                     //열 반복문
                     while (cellIter.hasNext()) {
                         val myCell = cellIter.next() as HSSFCell
-                        if (colno === 1) {//2번째 열이라면,
-                            parkName = myCell.toString() //대충 셀의 내용을 꺼내와 String으로 저장한다는 의미인듯
-                        } else if (colno === 2) {//3번째 열이라면,
-                            parkType = myCell.toString()
-                        } else if (colno === 5) {//6번째 열이라면,
-                            parkLat = myCell.toString()
-                        } else if (colno === 6) {//7번째 열이라면,
-                            parkLng = myCell.toString()
+                        when {
+                            //2번째 열이라면,
+                            colno === 1 -> parkName = myCell.toString() //대충 셀의 내용을 꺼내와 String으로 저장한다는 의미인듯
+                            colno === 2 -> parkType = myCell.toString()
+                            colno === 3 -> parkAddress1 = myCell.toString()
+                            colno === 4 -> parkAddress2 = myCell.toString()
+                            colno === 5 -> parkLat = myCell.toString()
+                            colno === 6 -> parkLng = myCell.toString()
+                            colno === 15 -> parkPhone = myCell.toString()
+                            colno === 17 -> parkEquip = myCell.toString()
                         }
 
                         colno++
                     }
 
-                    //4,8번째 열을 Mutablelist에 추가
                     //한 행의 데이터가 리스트에 추가된다.
-                    items.add(SearchData(parkName, parkType, parkLat, parkLng))
-
+                    items.add(SearchData(parkName, parkType, parkAddress1, parkAddress2, parkLat, parkLng, parkPhone, parkEquip))
 
                     //저장할 데이터를 만들어줍니다. (dataToSave는 mutableMapOf로 정의해줬습니다)
 //                    dataToSave.put("no", items[rowno].parkName)
