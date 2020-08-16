@@ -2,7 +2,7 @@ package com.example.petprint
 
 
 import android.Manifest
-import android.R
+//import android.R
 import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.location.Location
@@ -62,10 +62,11 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
     // The geographical location where the device is currently located. That is, the last-known
     // location retrieved by the Fused Location Provider.
     private var mLastKnownLocation: Location? = null
-    private var mLikelyPlaceNames: Array<String?>
-    private var mLikelyPlaceAddresses: Array<String?>
-    private var mLikelyPlaceAttributions: Array<List<*>?>
-    private var mLikelyPlaceLatLngs: Array<LatLng?>
+    //아래 변수 lateinit으로 땜빵했음
+    private lateinit var mLikelyPlaceNames: Array<String?>
+    private lateinit var mLikelyPlaceAddresses: Array<String?>
+    private lateinit var mLikelyPlaceAttributions: Array<List<*>?>
+    private lateinit var mLikelyPlaceLatLngs: Array<LatLng?>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -78,7 +79,7 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         // Retrieve the content view that renders the map.
-        setContentView(R.layout.activity_maps)
+        setContentView(R.layout.activity_walking_path)
 
         // Construct a PlacesClient
         Places.initialize(applicationContext, getString(R.string.google_maps_key))
@@ -115,22 +116,30 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
      * @param menu The options menu.
      * @return Boolean.
      */
+    //옵션 메뉴를 설정
+    /*
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.current_place_menu, menu)
         return true
     }
+
+     */
 
     /**
      * Handles a click on the menu option to get a place.
      * @param item The menu item to handle.
      * @return Boolean.
      */
+    //장소 가져오기 옵션을 클릭할 때 현재 장소를 가져옴
+    /*
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.option_get_place) {
             showCurrentPlace()
         }
         return true
     }
+
+     */
 
     /**
      * Manipulates the map when it's available.
@@ -141,9 +150,10 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Use a custom info window adapter to handle multiple lines of text in the
         // info window contents.
+        /*
         mMap!!.setInfoWindowAdapter(object : InfoWindowAdapter {
             // Return null here, so that getInfoContents() is called next.
-            override fun getInfoWindow(arg0: Marker): View {
+            override fun getInfoWindow(arg0: Marker): View? {
                 return null
             }
 
@@ -160,6 +170,7 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
                 return infoWindow
             }
         })
+         */
 
         // Prompt the user for permission.
         getLocationPermission()
@@ -170,15 +181,15 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
         // Get the current location of the device and set the position of the map.
         deviceLocation
     }// Set the map's camera position to the current location of the device./*
-    * Get the best and most recent location of the device, which may be null in rare
+    /* Get the best and most recent location of the device, which may be null in rare
     * cases when a location is not available.
     */
 
     /**
      * Gets the current location of the device, and positions the map's camera.
      */
-    val deviceLocation: Unit
-        private get() {
+    private val deviceLocation: Unit
+        get() {
             /*
              * Get the best and most recent location of the device, which may be null in rare
              * cases when a location is not available.
@@ -233,6 +244,7 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
     /**
      * Prompts the user for permission to use the device location.
      */
+    //앱에서 런타임 권한을 요청하여 사용자에게 위치 정보 액세스 권한을 허용 또는 거부할 수 있는 기회를 제공합니다.
     private fun getLocationPermission() {
         /*
          * Request location permission, so that we can get the location of the
@@ -257,6 +269,7 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
     /**
      * Handles the result of the request for location permissions.
      */
+    //권한 요청의 결과를 처리
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -267,7 +280,7 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
             PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
 
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.size > 0
+                if (grantResults.isNotEmpty()
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED
                 ) {
                     mLocationPermissionGranted = true
@@ -281,6 +294,8 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
      * Prompts the user to select the current place from a list of likely places, and shows the
      * current place on the map - provided the user has granted location permission.
      */
+    //현재 기기 위치의 예상 장소 목록을 가져옴.
+    /*
     private fun showCurrentPlace() {
         if (mMap == null) {
             return
@@ -288,7 +303,7 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
         if (mLocationPermissionGranted) {
             // Use fields to define the data types to return.
             val placeFields: List<Place.Field> =
-                Arrays.asList<Place.Field>(
+                listOf<Place.Field>(
                     Place.Field.NAME, Place.Field.ADDRESS,
                     Place.Field.LAT_LNG
                 )
@@ -300,52 +315,49 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
             // are the best match for the device's current location.
             val placeResult: Task<FindCurrentPlaceResponse> =
                 mPlacesClient.findCurrentPlace(request)
-            placeResult.addOnCompleteListener(object :
-                OnCompleteListener<FindCurrentPlaceResponse?> {
-                override fun onComplete(task: Task<FindCurrentPlaceResponse?>) {
-                    if (task.isSuccessful() && task.getResult() != null) {
-                        val likelyPlaces: FindCurrentPlaceResponse? = task.getResult()
+            placeResult.addOnCompleteListener { task ->
+                if (task.isSuccessful && task.result != null) {
+                    val likelyPlaces: FindCurrentPlaceResponse? = task.result
 
-                        // Set the count, handling cases where less than 5 entries are returned.
-                        val count: Int
-                        count = if (likelyPlaces.getPlaceLikelihoods()
-                                .size() < M_MAX_ENTRIES
-                        ) {
-                            likelyPlaces.getPlaceLikelihoods().size()
-                        } else {
-                            M_MAX_ENTRIES
-                        }
-                        var i = 0
-                        mLikelyPlaceNames = arrayOfNulls(count)
-                        mLikelyPlaceAddresses = arrayOfNulls(count)
-                        mLikelyPlaceAttributions = arrayOfNulls<List<*>?>(count)
-                        mLikelyPlaceLatLngs =
-                            arrayOfNulls(count)
-                        for (placeLikelihood in likelyPlaces.getPlaceLikelihoods()) {
-                            // Build a list of likely places to show the user.
-                            mLikelyPlaceNames[i] = placeLikelihood.getPlace().getName()
-                            mLikelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress()
-                            mLikelyPlaceAttributions[i] = placeLikelihood.getPlace()
-                                .getAttributions()
-                            mLikelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng()
-                            i++
-                            if (i > count - 1) {
-                                break
-                            }
-                        }
-
-                        // Show a dialog offering the user the list of likely places, and add a
-                        // marker at the selected place.
-                        openPlacesDialog()
+                    // Set the count, handling cases where less than 5 entries are returned.
+                    val count: Int
+                    count = if (likelyPlaces!!.placeLikelihoods
+                            .size < M_MAX_ENTRIES
+                    ) {
+                        likelyPlaces.placeLikelihoods.size
                     } else {
-                        Log.e(
-                            TAG,
-                            "Exception: %s",
-                            task.getException()
-                        )
+                        M_MAX_ENTRIES
                     }
+                    var i = 0
+                    mLikelyPlaceNames = arrayOfNulls(count)
+                    mLikelyPlaceAddresses = arrayOfNulls(count)
+                    mLikelyPlaceAttributions = arrayOfNulls<List<*>?>(count)
+                    mLikelyPlaceLatLngs =
+                        arrayOfNulls(count)
+                    for (placeLikelihood in likelyPlaces.placeLikelihoods) {
+                        // Build a list of likely places to show the user.
+                        mLikelyPlaceNames[i] = placeLikelihood.place.name
+                        mLikelyPlaceAddresses[i] = placeLikelihood.place.address
+                        mLikelyPlaceAttributions[i] = placeLikelihood.place
+                            .attributions
+                        mLikelyPlaceLatLngs[i] = placeLikelihood.place.latLng
+                        i++
+                        if (i > count - 1) {
+                            break
+                        }
+                    }
+
+                    // Show a dialog offering the user the list of likely places, and add a
+                    // marker at the selected place.
+                    openPlacesDialog()
+                } else {
+                    Log.e(
+                        TAG,
+                        "Exception: %s",
+                        task.exception
+                    )
                 }
-            })
+            }
         } else {
             // The user has not granted permission.
             Log.i(
@@ -365,10 +377,13 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
             getLocationPermission()
         }
     }
+     */
 
     /**
      * Displays a form allowing the user to select a place from a list of likely places.
      */
+    //메서드를 작성하여 사용자가 예상 장소 목록에서 장소를 선택할 수 있는 양식을 표시
+    /*
     private fun openPlacesDialog() {
         // Ask the user to choose the place where they are now.
         val listener =
@@ -408,6 +423,8 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
                 .setItems(mLikelyPlaceNames, listener)
                 .show()
     }
+
+     */
 
     /**
      * Updates the map's UI settings based on whether the user has granted location permission.

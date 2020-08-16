@@ -17,8 +17,8 @@ import java.io.InputStream
 
 class ExceltoFirestore : AppCompatActivity() {
     //cloud firestore 초기화, 콜렉션은 여기서 해도 되고 아래에서 정의해도 됩니다.
-    val quiz_db = FirebaseFirestore.getInstance().collection("Jungnang") //Seoul 컬렉션과 연결(?)
-    val dataToSave = mutableMapOf<String, String>() //각 다큐먼트의 필드
+    private val quizDb = FirebaseFirestore.getInstance().collection("Jungnang") //Seoul 컬렉션과 연결(?)
+    private val dataToSave = mutableMapOf<String, String>() //각 다큐먼트의 필드
     var items: MutableList<SearchData> = mutableListOf() //엑셀 파일의 내용을 저장하는 리스트
 
 
@@ -32,17 +32,17 @@ class ExceltoFirestore : AppCompatActivity() {
 
         //저장할 데이터를 만들어줍니다. (dataToSave는 mutableMapOf로 정의해줬습니다)
         for (i in 0 until items.size) {
-            dataToSave.put("snippet", items[i].parkType)
-            dataToSave.put("address(road)", items[i].parkAddress1)
-            dataToSave.put("address(lot)", items[i].parkAddress2)
-            dataToSave.put("lat", items[i].parkLat)
-            dataToSave.put("lng", items[i].parkLng)
-            dataToSave.put("phoneNumber", items[i].parkPhone)
-            dataToSave.put("Equipment", items[i].parkEquip)
+            dataToSave["snippet"] = items[i].parkType
+            dataToSave["address(road)"] = items[i].parkAddress1
+            dataToSave["address(lot)"] = items[i].parkAddress2
+            dataToSave["lat"] = items[i].parkLat
+            dataToSave["lng"] = items[i].parkLng
+            dataToSave["phoneNumber"] = items[i].parkPhone
+            dataToSave["Equipment"] = items[i].parkEquip
 
             //저는 여러개의 다큐먼트가 필요해서 다큐먼트도 유동적으로 생성되게 했습니다.
             //아래 코드는 dataToSave를 필드로 하여 다큐먼트를 새로 생성한다.
-            quiz_db.document(items[i].parkName) //매개변수: 다큐먼트의 이름이 된다.
+            quizDb.document(items[i].parkName) //매개변수: 다큐먼트의 이름이 된다.
                 //set("저장할 데이터")
                 .set(dataToSave) //dataToSave가 생성된 다큐먼트의 필드로 저장된다.
                 .addOnSuccessListener { documentReference ->
@@ -133,7 +133,7 @@ class ExceltoFirestore : AppCompatActivity() {
                 rowno++
             }
 
-            Log.e("checking", " items: " + items)
+            Log.e("checking", " items: $items")
 
         } catch (e: Exception) {
             Toast.makeText(this, "에러 발생", Toast.LENGTH_LONG).show()
