@@ -12,6 +12,8 @@ https://www.raywenderlich.com/230-introduction-to-google-maps-api-for-android-wi
 https://gogoadl.tistory.com/14 (DB에서 정보 가져와 지도에 찍기)
 https://developers.google.com/maps/documentation/android-sdk/marker?hl=ko (핀 디자인)
 https://developers.google.com/maps/documentation/android-sdk/polygon-tutorial?hl=ko (경로 그리기)
+https://developers.google.com/maps/documentation/android-sdk/current-place-tutorial (현재 위치 표시)
+https://github.com/googlemaps/android-samples/tree/master/tutorials/kotlin/CurrentPlaceDetailsOnMap (위의 설명 코드)
 
 첫 번째 링크 영상 따라하지 말고 Google Map Activity 눌러서 만드는게 편함.
 

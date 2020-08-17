@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//https://developers.google.com/maps/documentation/android-sdk/current-place-tutorial (이곳을 참고함)
 package com.example.petprint
 
 import android.Manifest
@@ -124,10 +125,13 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
      * @param menu The options menu.
      * @return Boolean.
      */
+    /*
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.current_place_menu, menu)
         return true
     }
+
+     */
 
     /**
      * Handles a click on the menu option to get a place.
@@ -135,6 +139,7 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
      * @return Boolean.
      */
     // [START maps_current_place_on_options_item_selected]
+    /*
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.option_get_place) {
             showCurrentPlace()
@@ -142,6 +147,8 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
         return true
     }
     // [END maps_current_place_on_options_item_selected]
+
+     */
 
     /**
      * Manipulates the map when it's available.
@@ -151,6 +158,7 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(map: GoogleMap) {
         this.map = map
 
+        /*현재 위치 표시와는 관계없는 코드인듯
         // [START_EXCLUDE]
         // [START map_current_place_set_info_window_adapter]
         // Use a custom info window adapter to handle multiple lines of text in the
@@ -173,6 +181,7 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         })
         // [END map_current_place_set_info_window_adapter]
+         */
 
         // Prompt the user for permission.
         getLocationPermission()
@@ -270,6 +279,7 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
      * current place on the map - provided the user has granted location permission.
      */
     // [START maps_current_place_show_current_place]
+    /*
     @SuppressLint("MissingPermission")
     private fun showCurrentPlace() {
         if (map == null) {
@@ -335,10 +345,13 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
     }
     // [END maps_current_place_show_current_place]
 
+     */
+
     /**
      * Displays a form allowing the user to select a place from a list of likely places.
      */
     // [START maps_current_place_open_places_dialog]
+    /*
     private fun openPlacesDialog() {
         // Ask the user to choose the place where they are now.
         val listener = DialogInterface.OnClickListener { dialog, which -> // The "which" argument contains the position of the selected item.
@@ -370,6 +383,8 @@ class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
             .show()
     }
     // [END maps_current_place_open_places_dialog]
+
+     */
 
     /**
      * Updates the map's UI settings based on whether the user has granted location permission.
