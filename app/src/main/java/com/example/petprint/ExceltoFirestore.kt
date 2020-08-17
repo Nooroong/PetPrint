@@ -20,13 +20,8 @@ class ExceltoFirestore : AppCompatActivity() {
     private val quizDb = FirebaseFirestore.getInstance().collection("Jungnang") //Seoul 컬렉션과 연결(?)
     private val dataToSave = mutableMapOf<String, String>() //각 다큐먼트의 필드
     var items: MutableList<SearchData> = mutableListOf() //엑셀 파일의 내용을 저장하는 리스트
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_exceltofirestore)
-
-        //엑셀 파일을 읽어 리스트에 저장하는 함수
+    
+    fun main(args: Array<String>) {
         readExcelFileFromAssets()
 
 
@@ -46,12 +41,21 @@ class ExceltoFirestore : AppCompatActivity() {
                 //set("저장할 데이터")
                 .set(dataToSave) //dataToSave가 생성된 다큐먼트의 필드로 저장된다.
                 .addOnSuccessListener { documentReference ->
-                            Log.d("asdf", "저장 성공")
+                    Log.d("asdf", "저장 성공")
                 }
                 .addOnFailureListener { e ->
-                            Log.w("asdf", "Error adding document", e)
+                    Log.w("asdf", "Error adding document", e)
                 }
         }
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_exceltofirestore)
+
+        //엑셀 파일을 읽어 리스트에 저장하는 함수
+
 
     }
 

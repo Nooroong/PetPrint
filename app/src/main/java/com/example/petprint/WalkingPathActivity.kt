@@ -48,7 +48,7 @@ import com.google.android.libraries.places.api.net.PlacesClient
 /**
  * An activity that displays a map showing the place at the device's current location.
  */
-class MapsActivityCurrentPlace : AppCompatActivity(), OnMapReadyCallback {
+class WalkingPathActivity : AppCompatActivity(), OnMapReadyCallback {
     private var map: GoogleMap? = null
     private var cameraPosition: CameraPosition? = null
 
@@ -396,7 +396,7 @@ class MapsActivityCurrentPlace : AppCompatActivity(), OnMapReadyCallback {
     // [END maps_current_place_update_location_ui]
 
     companion object {
-        private val TAG = MapsActivityCurrentPlace::class.java.simpleName
+        private val TAG = WalkingPathActivity::class.java.simpleName
         private const val DEFAULT_ZOOM = 15
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 
