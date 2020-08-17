@@ -34,6 +34,7 @@
 
         <activity android:name=".DrawRoute"/>
 
+
         <activity
             android:name=".WalkingPathActivity"
             android:label="@string/title_activity_walking_path"></activity>
