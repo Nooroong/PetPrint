@@ -1,23 +1,65 @@
 package com.example.petprint
 
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.util.Log
 import com.google.android.gms.maps.*
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.firebase.firestore.FirebaseFirestore
+
+import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
+import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.net.PlacesClient
+
+/*
+DB의 정보를 이용해 핀 그리기 + 세부정보 표시 + 현재 위치 표시 및 이동
+
+<현재 위치 표시 및 이동>
+https://developers.google.com/maps/documentation/android-sdk/current-place-tutorial (이곳을 참고함)
+WalkingPathActivity.kt의 코드에서 필요한 부분만 가져왔습니다.
+자세한 부분은 WalkingPathActivity.kt를 참고하시면 됩니다.
+ */
+
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val db = FirebaseFirestore.getInstance()
-    private lateinit var mMap: GoogleMap
+    private var map: GoogleMap? = null
+    private var cameraPosition: CameraPosition? = null
+    private lateinit var placesClient: PlacesClient
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private val defaultLocation = LatLng(-33.8523341, 151.2106085)
+    private var locationPermissionGranted = false
+    private var lastKnownLocation: Location? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION)
+            cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION)
+        }
+
         setContentView(R.layout.activity_main)
 
+        Places.initialize(applicationContext, getString(R.string.google_maps_key))
+        placesClient = Places.createClient(this)
+
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -26,6 +68,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     }
+
+
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        map?.let { map ->
+            outState.putParcelable(KEY_CAMERA_POSITION, map.cameraPosition)
+            outState.putParcelable(KEY_LOCATION, lastKnownLocation)
+        }
+        super.onSaveInstanceState(outState)
+    }
+
 
     /**
      * Manipulates the map once available.
@@ -37,10 +90,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
      * installed Google Play services and returned to the app.
      */
     override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
+        map = googleMap
         var i = 0
         val collection = arrayOf<String>("Gangbuk", "Jungnang", "Nowon", "Seongbuk")
 
+        //for문: DB에 저장된 정보를 바탕으로 핀을 그립니다.
         for (path in collection) {
             db.collection(path)
                 .get()
@@ -80,9 +134,108 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
 
+        getLocationPermission()
+        updateLocationUI()
+        getDeviceLocation()
+
+
         val uiSettings: UiSettings = googleMap.uiSettings
         uiSettings.isZoomControlsEnabled = true //확대, 축소 버튼
     }
 
+
+    private fun getDeviceLocation() {
+        try {
+            if (locationPermissionGranted) {
+                val locationResult = fusedLocationProviderClient.lastLocation
+                locationResult.addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        // Set the map's camera position to the current location of the device.
+                        lastKnownLocation = task.result
+                        if (lastKnownLocation != null) {
+                            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                LatLng(lastKnownLocation!!.latitude,
+                                    lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
+                        }
+                    } else {
+                        Log.d(TAG, "Current location is null. Using defaults.")
+                        Log.e(TAG, "Exception: %s", task.exception)
+                        map?.moveCamera(CameraUpdateFactory
+                            .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
+                        map?.uiSettings?.isMyLocationButtonEnabled = false
+                    }
+                }
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
+
+
+    private fun getLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this.applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+            locationPermissionGranted = true
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+            )
+        }
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int,
+                                            permissions: Array<String>,
+                                            grantResults: IntArray) {
+        locationPermissionGranted = false
+        when (requestCode) {
+            PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
+
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.isNotEmpty() &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    locationPermissionGranted = true
+                }
+            }
+        }
+        updateLocationUI()
+    }
+
+
+    private fun updateLocationUI() {
+        if (map == null) {
+            return
+        }
+        try {
+            if (locationPermissionGranted) {
+                map?.isMyLocationEnabled = true
+                map?.uiSettings?.isMyLocationButtonEnabled = true
+            } else {
+                map?.isMyLocationEnabled = false
+                map?.uiSettings?.isMyLocationButtonEnabled = false
+                lastKnownLocation = null
+                getLocationPermission()
+            }
+        } catch (e: SecurityException) {
+            Log.e("Exception: %s", e.message, e)
+        }
+    }
+
+
+    companion object {
+        private val TAG = WalkingPathActivity::class.java.simpleName
+        private const val DEFAULT_ZOOM = 15
+        private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
+
+        // Keys for storing activity state.
+        // [START maps_current_place_state_keys]
+        private const val KEY_CAMERA_POSITION = "camera_position"
+        private const val KEY_LOCATION = "location"
+        // [END maps_current_place_state_keys]
+
+        // Used for selecting the current place.
+        private const val M_MAX_ENTRIES = 5
+    }
 }
 
