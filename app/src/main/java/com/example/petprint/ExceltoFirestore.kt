@@ -2,6 +2,7 @@ package com.example.petprint
 
 import android.os.Bundle
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,8 +21,12 @@ class ExceltoFirestore : AppCompatActivity() {
     private val quizDb = FirebaseFirestore.getInstance().collection("Jungnang") //Seoul 컬렉션과 연결(?)
     private val dataToSave = mutableMapOf<String, String>() //각 다큐먼트의 필드
     var items: MutableList<SearchData> = mutableListOf() //엑셀 파일의 내용을 저장하는 리스트
-    
-    fun main(args: Array<String>) {
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_exceltofirestore)
+
         readExcelFileFromAssets()
 
 
@@ -49,15 +54,6 @@ class ExceltoFirestore : AppCompatActivity() {
         }
     }
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_exceltofirestore)
-
-        //엑셀 파일을 읽어 리스트에 저장하는 함수
-
-
-    }
 
 
     private fun readExcelFileFromAssets() {
