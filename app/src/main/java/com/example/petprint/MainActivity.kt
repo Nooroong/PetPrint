@@ -6,10 +6,12 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.firebase.firestore.FirebaseFirestore
 
 import android.Manifest
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -24,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
+import kotlinx.android.synthetic.main.activity_main.*
 
 /*
 DB의 정보를 이용해 핀 그리기 + 세부정보 표시 + 현재 위치 표시 및 이동
@@ -66,7 +69,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-
+        zoominBtn.setOnClickListener {
+            map?.animateCamera(CameraUpdateFactory.zoomIn())
+        }
+        zoomoutBtn.setOnClickListener {
+            map?.animateCamera(CameraUpdateFactory.zoomOut())
+        }
     }
 
 
@@ -139,9 +147,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         getDeviceLocation()
 
 
-        val uiSettings: UiSettings = googleMap.uiSettings
-        uiSettings.isZoomControlsEnabled = true //확대, 축소 버튼
+//        val uiSettings: UiSettings = googleMap.uiSettings
+//        uiSettings.isZoomControlsEnabled = true //확대, 축소 버튼
     }
+
 
 
     private fun getDeviceLocation() {
