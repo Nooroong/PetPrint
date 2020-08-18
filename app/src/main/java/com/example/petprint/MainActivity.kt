@@ -69,6 +69,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        //확대 및 축소
         zoominBtn.setOnClickListener {
             map?.animateCamera(CameraUpdateFactory.zoomIn())
         }
@@ -147,8 +148,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         getDeviceLocation()
 
 
-//        val uiSettings: UiSettings = googleMap.uiSettings
+        val uiSettings: UiSettings = googleMap.uiSettings
 //        uiSettings.isZoomControlsEnabled = true //확대, 축소 버튼
+        map!!.uiSettings.isMyLocationButtonEnabled = true
     }
 
 
@@ -167,11 +169,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                     lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
                         }
                     } else {
-                        Log.d(TAG, "Current location is null. Using defaults.")
-                        Log.e(TAG, "Exception: %s", task.exception)
+                        Log.d("LocationCheck", "Current location is null. Using defaults.")
+                        Log.e("LocationCheck", "Exception: %s", task.exception)
                         map?.moveCamera(CameraUpdateFactory
                             .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
-                        map?.uiSettings?.isMyLocationButtonEnabled = false
+//                        map?.uiSettings?.isMyLocationButtonEnabled = false
                     }
                 }
             }
@@ -212,6 +214,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
+    //위치 권한 허용에 따라 버튼 생성
     private fun updateLocationUI() {
         if (map == null) {
             return
@@ -219,10 +222,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         try {
             if (locationPermissionGranted) {
                 map?.isMyLocationEnabled = true
-                map?.uiSettings?.isMyLocationButtonEnabled = true
+//                map?.uiSettings?.isMyLocationButtonEnabled = true
             } else {
                 map?.isMyLocationEnabled = false
-                map?.uiSettings?.isMyLocationButtonEnabled = false
+//                map?.uiSettings?.isMyLocationButtonEnabled = false
                 lastKnownLocation = null
                 getLocationPermission()
             }

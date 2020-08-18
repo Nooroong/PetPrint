@@ -14,6 +14,7 @@ https://developers.google.com/maps/documentation/android-sdk/marker?hl=ko (핀 �
 https://developers.google.com/maps/documentation/android-sdk/polygon-tutorial?hl=ko (경로 그리기)
 https://developers.google.com/maps/documentation/android-sdk/current-place-tutorial (현재 위치 표시)
 https://github.com/googlemaps/android-samples/tree/master/tutorials/kotlin/CurrentPlaceDetailsOnMap (위의 설명 코드)
+https://developers.google.com/maps/documentation/android-sdk/location?hl=ko (위치 정보)
 
 첫 번째 링크 영상 따라하지 말고 Google Map Activity 눌러서 만드는게 편함.
 
