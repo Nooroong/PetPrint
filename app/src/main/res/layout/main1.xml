@@ -7,7 +7,7 @@
     android:orientation="horizontal"
     android:gravity="center"
     tools:context=".MainActivity"
-    android:background="#E47A3E">
+    android:background="@color/mainColor">
 
     <ImageView
         android:id="@+id/image"
