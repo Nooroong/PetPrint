@@ -19,6 +19,12 @@ https://nittaku.tistory.com/69 (함수 설명. 한국어)
 
 https://developers.google.com/maps/documentation/android-sdk/location?hl=ko (위치 정보)
 
+
+*이동 경로 그리기
+https://jinseongsoft.tistory.com/23
+https://github.com/googlemaps/android-samples/blob/master/ApiDemos/java/app/src/gms/java/com/example/mapdemo/PermissionUtils.java
+
+
 첫 번째 링크 영상 따라하지 말고 Google Map Activity 눌러서 만드는게 편함.
 
 
