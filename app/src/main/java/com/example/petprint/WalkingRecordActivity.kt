@@ -10,22 +10,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_walking_record.*
 
 class WalkingRecordActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
-    private val walkingList = ArrayList<WalkingList>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_walking_record)
 
-
+        val walkingList = ArrayList<WalkingList>()
         db.collection("WalkingData")
             .get()
             .addOnSuccessListener { result ->
@@ -44,8 +39,9 @@ class WalkingRecordActivity : AppCompatActivity() {
                 Log.w("mapPoint", "Error getting documents.", exception)
             }
 
-        val adapter =
-            RecyclerViewAdapter(walkingList, LayoutInflater.from(this@WalkingRecordActivity))
+        Log.d("chekinggg", walkingList.toString())
+
+        val adapter = RecyclerViewAdapter(walkingList, LayoutInflater.from(this@WalkingRecordActivity))
         recycler_view.adapter = adapter
         //수직으로 그리기
         recycler_view.layoutManager = LinearLayoutManager(this@WalkingRecordActivity)
@@ -61,7 +57,7 @@ class WalkingList(
 ) {}
 
 class RecyclerViewAdapter(
-    var itemList: ArrayList<WalkingList>,
+    var itemList: List<WalkingList>,
     var inflater: LayoutInflater
 ) : RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() { //얘를 상속받아야함. 제너릭은 inner class type
 

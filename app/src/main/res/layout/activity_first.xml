@@ -61,6 +61,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="산책하기" />
+
+                <Button
+                    android:id="@+id/record"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="산책기록" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

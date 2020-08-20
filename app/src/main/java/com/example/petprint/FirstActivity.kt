@@ -31,5 +31,14 @@ class FirstActivity : AppCompatActivity() {
                 startActivity(Intent(this@FirstActivity, WalkingPathActivity::class.java))
             }
         }
+
+        record.setOnClickListener {
+            if(status == NetworkStatus.TYPE_NOT_CONNECTED) {
+                Toast.makeText(this, "인터넷에 연결되어 있지 않습니다.\n연결 후 다시 시도해주세요.", Toast.LENGTH_LONG).show()
+            }
+            else {
+                startActivity(Intent(this@FirstActivity, WalkingRecordActivity::class.java))
+            }
+        }
     }
 }

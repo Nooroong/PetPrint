@@ -14,8 +14,6 @@ import android.os.Message
 import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
@@ -33,8 +31,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.libraries.places.api.Places
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_walking_path.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -61,6 +59,9 @@ class WalkingPathActivity : AppCompatActivity(),
     private var sec: Int = 0
     private var hour: Int = 0
     private val polylines = mutableListOf<Polyline>()
+    private val quizDb = FirebaseFirestore.getInstance().collection("WalkingData")
+    private val dataToSave = mutableMapOf<String, String?>() //각 다큐먼트의 필드
+    private var startTime: String? = null
 
 
     //타이머 핸들러
@@ -116,7 +117,6 @@ class WalkingPathActivity : AppCompatActivity(),
 
     //걷기 상태 변경
     private fun changeWalkState() {
-        val intent: Intent = Intent()
         val currentDateTime = Calendar.getInstance().time
 
         //GPS가 꺼져있다면
@@ -130,32 +130,42 @@ class WalkingPathActivity : AppCompatActivity(),
         }
 
         if (!walkState) { //정지 -> 걷기
+            startTime = SimpleDateFormat("HH:mm:ss", Locale.KOREA).format(currentDateTime)
             Toast.makeText(applicationContext, "걸음 시작", Toast.LENGTH_SHORT).show()
             walkState = true
             startLatLng = LatLng(
                 mCurrentLocation!!.latitude, mCurrentLocation!!.longitude) //현재 위치를 시작점으로 설정
             walking_start.text = "종료"
-
-            var startTime = SimpleDateFormat("HH:mm:ss", Locale.KOREA).format(currentDateTime)
-            intent.putExtra("WalkingStartTime", startTime)
-
             mHandler.sendEmptyMessage(0) //타이머 시작
 
         } else { //걷기 -> 정지
+            var date = SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA).format(currentDateTime)
+            var endTime = SimpleDateFormat("HH:mm:ss", Locale.KOREA).format(currentDateTime)
+
             Toast.makeText(applicationContext, "걸음 종료", Toast.LENGTH_SHORT).show()
             walkState = false
             walking_start.text = "시작"
             mHandler.removeMessages(0) //타이머 일시정지
 
+            dataToSave["walkingDate"] = date
+            dataToSave["startTime"] = startTime
+            dataToSave["endTime"] = endTime
+            dataToSave["wholeTime"] = "" + hour + "시 " + min + "분 " + sec + "초"
 
-            var date = SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA).format(currentDateTime)
-            var endTime = SimpleDateFormat("HH:mm:ss", Locale.KOREA).format(currentDateTime)
-            intent.putExtra("WalkingDate", date)
-            intent.putExtra("WalkingEndTime", endTime)
-            intent.putExtra("WalkingTime", "" + hour + "시 " + min + "분 " + sec + "초")
 
-            setResult(Activity.RESULT_OK, intent)
-            startActivity(Intent(this@WalkingPathActivity, SaveData::class.java))
+            //저는 여러개의 다큐먼트가 필요해서 다큐먼트도 유동적으로 생성되게 했습니다.
+            //아래 코드는 dataToSave를 필드로 하여 다큐먼트를 새로 생성한다.
+            quizDb.document("$date $startTime") //매개변수: 다큐먼트의 이름이 된다.
+                //set("저장할 데이터")
+                .set(dataToSave) //dataToSave가 생성된 다큐먼트의 필드로 저장된다.
+                .addOnSuccessListener { documentReference ->
+                    Log.d("asdf", "저장 성공")
+                }
+                .addOnFailureListener { e ->
+                    Log.w("asdf", "Error adding document", e)
+                }
+
+            startActivity(Intent(this@WalkingPathActivity, WalkingRecordActivity::class.java))
             finish() //액티비티 종료
         }
     }

@@ -1,13 +1,10 @@
 package com.example.petprint
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 
 class SaveData : AppCompatActivity() {
@@ -23,7 +20,6 @@ class SaveData : AppCompatActivity() {
         val startTime = intent.getStringExtra("WalkingStartTime")
         val endTime = intent.getStringExtra("WalkingEndTime")
         val walkingTime = intent.getStringExtra("WalkingTime")
-
 
         //저장할 데이터를 만들어줍니다. (dataToSave는 mutableMapOf로 정의해줬습니다)
         dataToSave["walkingDate"] = walkingDate
@@ -43,6 +39,7 @@ class SaveData : AppCompatActivity() {
             .addOnFailureListener { e ->
                 Log.w("asdf", "Error adding document", e)
             }
+
         startActivity(Intent(this@SaveData, WalkingRecordActivity::class.java))
         finish() //액티비티 종료
     }
