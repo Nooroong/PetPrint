@@ -22,9 +22,9 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
-        android:text="0:0:0"
+        android:text="0시 0분 0초"
         android:textColor="#454545"
-        android:textSize="50dp" />
+        android:textSize="40dp" />
 
     <Button
         android:id="@+id/walking_start"
