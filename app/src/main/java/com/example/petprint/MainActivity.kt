@@ -53,8 +53,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
-
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION)
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION)
@@ -71,6 +69,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
 
         zoominBtn.setOnClickListener {
             map?.animateCamera(CameraUpdateFactory.zoomIn())
@@ -160,11 +160,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //https://webnautes.tistory.com/1011
         map?.setOnMyLocationButtonClickListener(OnMyLocationButtonClickListener {
             if (!locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                Toast.makeText(this, "위치를 사용으로 변경해주세요.", Toast.LENGTH_LONG).show()
                 //GPS 설정화면으로 이동
-                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                intent.addCategory(Intent.CATEGORY_DEFAULT);
-                startActivity(intent);
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                intent.addCategory(Intent.CATEGORY_DEFAULT)
+                startActivity(intent)
+                Toast.makeText(this, "위치를 사용으로 변경해주세요.", Toast.LENGTH_LONG).show()
             }
             else { //gps가 켜졌으면
                 getDeviceLocation() //버튼 클릭 시 현재 위치로 이동
@@ -267,6 +267,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 ) {
                     locationPermissionGranted = true
                 }
+                else return
             }
         }
         updateLocationUI()

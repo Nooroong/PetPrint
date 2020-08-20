@@ -122,10 +122,10 @@ class WalkingPathActivity : AppCompatActivity(),
         //GPS가 꺼져있다면
         if(!locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER)!!){
             //GPS 설정화면으로 이동
-            Toast.makeText(this, "위치를 사용으로 전환해주세요.", Toast.LENGTH_LONG).show()
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             intent.addCategory(Intent.CATEGORY_DEFAULT)
             startActivity(intent)
+            Toast.makeText(this, "위치를 사용으로 전환해주세요.", Toast.LENGTH_LONG).show()
             return
         }
 
