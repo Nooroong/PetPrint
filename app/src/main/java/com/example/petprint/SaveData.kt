@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
+//얘는 필요없음
 
 class SaveData : AppCompatActivity() {
     private val quizDb = FirebaseFirestore.getInstance().collection("WalkingData")

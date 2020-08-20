@@ -14,37 +14,36 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_walking_record.*
 
 class WalkingRecordActivity : AppCompatActivity() {
-    private val db = FirebaseFirestore.getInstance()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_walking_record)
 
-        val walkingList = ArrayList<WalkingList>()
+        val db = FirebaseFirestore.getInstance()
+        val walkingList = mutableListOf<WalkingList>()
         db.collection("WalkingData")
             .get()
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    walkingList.add(
-                        WalkingList(
-                            document.data["walkingDate"].toString(),
-                            document.data["startTime"].toString(),
-                            document.data["endTime"].toString(),
-                            document.data["wholeTime"].toString()
-                        )
+                    walkingList += WalkingList(
+                        document.data["walkingDate"] as String,
+                        document.data["startTime"] as String,
+                        document.data["endTime"] as String,
+                        document.data["wholeTime"] as String
                     )
                 }
+                //이 부분은 안에 넣어줘야지만 뷰가 그려짐. 이유는 모름...
+                val adapter = RecyclerViewAdapter(walkingList, LayoutInflater.from(this@WalkingRecordActivity))
+                recycler_view.adapter = adapter
+                //수직으로 그리기
+                recycler_view.layoutManager = LinearLayoutManager(this@WalkingRecordActivity)
             }
             .addOnFailureListener { exception ->
                 Log.w("mapPoint", "Error getting documents.", exception)
             }
 
-        Log.d("chekinggg", walkingList.toString())
+//        Log.d("chekinggg", walkingList.toString())
 
-        val adapter = RecyclerViewAdapter(walkingList, LayoutInflater.from(this@WalkingRecordActivity))
-        recycler_view.adapter = adapter
-        //수직으로 그리기
-        recycler_view.layoutManager = LinearLayoutManager(this@WalkingRecordActivity)
+
     }
 }
 
@@ -93,9 +92,9 @@ class RecyclerViewAdapter(
         //holder: 위에 적은 ViewHolder의 객체
         //뷰를 그림
         //holder.carName, holder.carEngine: 텍스트뷰 객체(?)
-        holder.date.setText(itemList[position].walkingDate)
-        holder.start_time.setText(itemList[position].startTime)
-        holder.end_time.setText(itemList[position].endTime)
-        holder.whole_time.setText(itemList[position].walkingTime)
+        holder.date.text = itemList[position].walkingDate
+        holder.start_time.append(itemList[position].startTime)
+        holder.end_time.append(itemList[position].endTime)
+        holder.whole_time.append(itemList[position].walkingTime)
     }
 }
