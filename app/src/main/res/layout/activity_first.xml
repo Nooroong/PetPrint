@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="반려동물을 위한 산책로"
+                android:textColor="#000000"
+                android:textSize="40dp" />
+
+
+            <ImageView
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_gravity="center"
+                android:src="@drawable/dog" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                android:layout_gravity="center"
+                android:text=" 펫프린트(Petprint)는 pet과  footprint 를 합친 말로 강아지의  발자국을 따라 산책 경로를 탐색하는 앱 입니다. 공공데이터를 기반으로 만들어진 펫프린트를 따라 반려견과 행복한 산책을 시작해보세요 !"
+                android:textColor="#000000"
+                android:textSize="27dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+            </TextView>
+
+            <Button
+                android:id="@+id/gotomap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="시작하기"
+                android:layout_marginLeft="10dp"/>
+        </LinearLayout>
+    </ScrollView>
+
+
+
+
+</LinearLayout>
