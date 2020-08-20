@@ -1,6 +1,7 @@
 package com.example.petprint
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -35,6 +36,8 @@ import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_walking_path.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class WalkingPathActivity : AppCompatActivity(),
     NavigationView.OnNavigationItemSelectedListener,
@@ -49,7 +52,7 @@ class WalkingPathActivity : AppCompatActivity(),
     private var mCurrentLocation: Location? = null
     private val mFusedLocationProviderApi: FusedLocationProviderApi? = null
     private var mPermissionDenied = false
-    private val locationManager: LocationManager? = null
+    private var locationManager: LocationManager? = null
     private var mCurrentMarker: Marker? = null
     private var startLatLng = LatLng(0.0, 0.0) //polyline 시작점
     private var endLatLng = LatLng(0.0, 0.0) //polyline 끝점
@@ -60,11 +63,9 @@ class WalkingPathActivity : AppCompatActivity(),
     private val polylines = mutableListOf<Polyline>()
 
 
+    //타이머 핸들러
     var mHandler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
-            // 메세지를 처리하고 또다시 핸들러에 메세지 전달 (1000ms 지연)
-            sendEmptyMessageDelayed(0, 1000)
-
             sec++
 
             if (sec >= 60) { //분 증가
@@ -76,7 +77,10 @@ class WalkingPathActivity : AppCompatActivity(),
                 min = 0
             }
 
-            time.text = "$hour : $min : $sec" //텍스트 변경
+            time.text = "" + hour + "시 " + min + "분 " + sec + "초" //텍스트 변경
+
+            // 메세지를 처리하고 또다시 핸들러에 메세지 전달 (1000ms 지연)
+            sendEmptyMessageDelayed(0, 1000)
         }
     }
 
@@ -85,18 +89,20 @@ class WalkingPathActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_walking_path)
 
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager?
 
-        val fab =
-            findViewById<View>(R.id.walking_start) as Button
-        fab.setOnClickListener {
+        //시작 버튼 클릭 시
+        walking_start.setOnClickListener {
             changeWalkState() //걸음 상태 변경
         }
 
 
+        //지도 생성인가
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment!!.getMapAsync(this)
 
+        //얘는 뭔지 모르겠음
         if (mGoogleApiClient == null) {
             mGoogleApiClient = GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -108,27 +114,58 @@ class WalkingPathActivity : AppCompatActivity(),
     }
 
 
+    //걷기 상태 변경
     private fun changeWalkState() {
-        if (!walkState) {
+        val intent: Intent = Intent()
+        val currentDateTime = Calendar.getInstance().time
+
+        //GPS가 꺼져있다면
+        if(!locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER)!!){
+            //GPS 설정화면으로 이동
+            Toast.makeText(this, "위치를 사용으로 전환해주세요.", Toast.LENGTH_LONG).show()
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            intent.addCategory(Intent.CATEGORY_DEFAULT)
+            startActivity(intent)
+            return
+        }
+
+        if (!walkState) { //정지 -> 걷기
             Toast.makeText(applicationContext, "걸음 시작", Toast.LENGTH_SHORT).show()
             walkState = true
             startLatLng = LatLng(
                 mCurrentLocation!!.latitude, mCurrentLocation!!.longitude) //현재 위치를 시작점으로 설정
             walking_start.text = "종료"
-            mHandler.sendEmptyMessage(0)
-        } else {
+
+            var startTime = SimpleDateFormat("HH:mm:ss", Locale.KOREA).format(currentDateTime)
+            intent.putExtra("WalkingStartTime", startTime)
+
+            mHandler.sendEmptyMessage(0) //타이머 시작
+
+        } else { //걷기 -> 정지
             Toast.makeText(applicationContext, "걸음 종료", Toast.LENGTH_SHORT).show()
             walkState = false
             walking_start.text = "시작"
-            mHandler.removeMessages(0)
+            mHandler.removeMessages(0) //타이머 일시정지
+
+
+            var date = SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA).format(currentDateTime)
+            var endTime = SimpleDateFormat("HH:mm:ss", Locale.KOREA).format(currentDateTime)
+            intent.putExtra("WalkingDate", date)
+            intent.putExtra("WalkingEndTime", endTime)
+            intent.putExtra("WalkingTime", "" + hour + "시 " + min + "분 " + sec + "초")
+
+            setResult(Activity.RESULT_OK, intent)
+            startActivity(Intent(this@WalkingPathActivity, SaveData::class.java))
+            finish() //액티비티 종료
         }
     }
 
-    private fun drawPath() { //polyline을 그려주는 메소드
-        val options = PolylineOptions().add(startLatLng).add(endLatLng).width(15f)
-            .color(Color.BLACK).geodesic(true)
+    //polyline을 그려주는 메소드. 동작 원리는 잘 모르겠음.(특히 리스트 사용하는 부분)
+    private fun drawPath() {
+        val options = PolylineOptions().add(startLatLng).add(endLatLng).width(12f)
+            .color(Color.DKGRAY).geodesic(true)
         polylines.add(mMap!!.addPolyline(options))
-        mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(startLatLng, 18f))
+        mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(startLatLng, 18f)) //이동지점으로 계속 카메라가 따라감
     }
 
     override fun onStart() {
@@ -143,6 +180,16 @@ class WalkingPathActivity : AppCompatActivity(),
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
+
+        //GPS가 꺼져있다면
+        if(!locationManager?.isProviderEnabled(LocationManager.GPS_PROVIDER)!!){
+            //GPS 설정화면으로 이동
+            Toast.makeText(this, "위치를 사용으로 전환해주세요.", Toast.LENGTH_LONG).show()
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            intent.addCategory(Intent.CATEGORY_DEFAULT)
+            startActivity(intent)
+        }
     }
 
     override fun onConnected(bundle: Bundle?) {
@@ -170,9 +217,11 @@ class WalkingPathActivity : AppCompatActivity(),
         }
     }
 
+    //얘가 호출될 때마다 GPS 정보가 업데이트됨.
     override fun onLocationChanged(location: Location) {
         val latitude = location.latitude
         val longtitude = location.longitude
+
         if (mCurrentMarker != null) mCurrentMarker!!.remove()
         mCurrentLocation = location
         val markerOptions = MarkerOptions()
@@ -183,6 +232,7 @@ class WalkingPathActivity : AppCompatActivity(),
                 LatLng(mCurrentLocation!!.latitude, mCurrentLocation!!.longitude), 18f
             )
         )
+
         if (walkState) { //걸음 시작 버튼이 눌렸을 때
             endLatLng = LatLng(latitude, longtitude) //현재 위치를 끝점으로 설정
             drawPath() //polyline 그리기
