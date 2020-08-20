@@ -1,19 +1,25 @@
 package com.example.petprint
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationManager
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMyLocationButtonClickListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
@@ -28,7 +34,7 @@ DB의 정보를 이용해 핀 그리기 + 세부정보 표시 + 현재 위치 �
 
 <현재 위치 표시 및 이동>
 https://developers.google.com/maps/documentation/android-sdk/current-place-tutorial (이곳을 참고함)
-WalkingPathActivity.kt의 코드에서 필요한 부분만 가져왔습니다.
+CurrentPlace.kt의 코드에서 필요한 부분만 가져왔습니다.
 자세한 부분은 CurrentPlace.kt를 참고하시면 됩니다.
  */
 
@@ -42,9 +48,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val defaultLocation = LatLng(-33.8523341, 151.2106085)
     private var locationPermissionGranted = false
     private var lastKnownLocation: Location? = null
+    private var locationManager: LocationManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
 
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION)
@@ -71,10 +80,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         //시작하면 세부 화면은 안 보이게
-        card_view.visibility= View.GONE
+        card_view.visibility = View.GONE
     }
-
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         map?.let { map ->
@@ -128,8 +135,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         val marker1: Marker? = null //빈 마커 생성
 
                         //핀 추가하면서 나머지 데이터도 미리 저장해 둔다
-                        val marker_data2 = hashMapOf("phonenum" to document.data["phoneNumber"].toString(), "equip" to document.data["Equipment"].toString())
-                        val marker_data= hashMapOf(marker1 to marker_data2) //마커 안에 전화번호, 편의시설 정보를 숨기기 위한 hashmap
+                        val marker_data2 = hashMapOf(
+                            "phonenum" to document.data["phoneNumber"].toString(),
+                            "equip" to document.data["Equipment"].toString()
+                        )
+                        val marker_data =
+                            hashMapOf(marker1 to marker_data2) //마커 안에 전화번호, 편의시설 정보를 숨기기 위한 hashmap
 
                         googleMap.addMarker(markerOptions)
 //                        googleMap.addMarker(marker_data) //핀 추가
@@ -146,10 +157,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
         }
 
+        //https://webnautes.tistory.com/1011
+        map?.setOnMyLocationButtonClickListener(OnMyLocationButtonClickListener {
+            if (!locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                Toast.makeText(this, "위치를 사용으로 변경해주세요.", Toast.LENGTH_LONG).show()
+                //GPS 설정화면으로 이동
+                val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                startActivity(intent);
+            }
+            else { //gps가 켜졌으면
+                getDeviceLocation() //버튼 클릭 시 현재 위치로 이동
+            }
+            true
+        })
+
         //마커 클릭 리스너-마커 클릭하면 카드뷰 띄움
         googleMap!!.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener {
             override fun onMarkerClick(marker: Marker): Boolean {
-                card_view.visibility= View.VISIBLE
+                card_view.visibility = View.VISIBLE
                 var parkname = findViewById<TextView>(R.id.park_name)
                 var parkwhat = findViewById<TextView>(R.id.park_what)
                 var parkphone = findViewById<TextView>(R.id.phone_num)
@@ -164,17 +190,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //맵 클릭 리스너-맵 클릭하면 카드뷰 없어짐
         googleMap!!.setOnMapClickListener(object : GoogleMap.OnMapClickListener {
             override fun onMapClick(latLng: LatLng) {
-                card_view.visibility=View.GONE
+                card_view.visibility = View.GONE
             }
         })
 
         getLocationPermission()
         updateLocationUI()
-        getDeviceLocation()
 
-
-//        val uiSettings: UiSettings = googleMap.uiSettings
-//        uiSettings.isZoomControlsEnabled = true //확대, 축소 버튼
 
     }
 
@@ -187,15 +209,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         // Set the map's camera position to the current location of the device.
                         lastKnownLocation = task.result
                         if (lastKnownLocation != null) {
-                            map?.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                LatLng(lastKnownLocation!!.latitude,
-                                    lastKnownLocation!!.longitude), DEFAULT_ZOOM.toFloat()))
+                            map?.moveCamera(
+                                CameraUpdateFactory.newLatLngZoom(
+                                    LatLng(
+                                        lastKnownLocation!!.latitude,
+                                        lastKnownLocation!!.longitude
+                                    ), DEFAULT_ZOOM.toFloat()
+                                )
+                            )
                         }
                     } else {
                         Log.d(TAG, "Current location is null. Using defaults.")
                         Log.e(TAG, "Exception: %s", task.exception)
-                        map?.moveCamera(CameraUpdateFactory
-                            .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat()))
+                        map?.moveCamera(
+                            CameraUpdateFactory
+                                .newLatLngZoom(defaultLocation, DEFAULT_ZOOM.toFloat())
+                        )
                         map?.uiSettings?.isMyLocationButtonEnabled = false
                     }
                 }
@@ -207,28 +236,35 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     private fun getLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this.applicationContext,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this.applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+            == PackageManager.PERMISSION_GRANTED
+        ) {
             locationPermissionGranted = true
         } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
             )
         }
     }
 
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>,
-                                            grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         locationPermissionGranted = false
         when (requestCode) {
             PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION -> {
 
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.isNotEmpty() &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED
+                ) {
                     locationPermissionGranted = true
                 }
             }
