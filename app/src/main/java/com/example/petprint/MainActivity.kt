@@ -6,19 +6,22 @@ import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 /*
 DB의 정보를 이용해 핀 그리기 + 세부정보 표시 + 현재 위치 표시 및 이동
@@ -115,22 +118,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         val markerOptions = MarkerOptions() //핀
                         markerOptions.title(document.id) //공원 이름
 
-                        //val snippet_t = TextView(applicationContext)
-//                        val markerSnippet =
-//                            "공원 종류: " + document.data["snippet"].toString() + "\n" + "전화번호: " + document.data["snippet"].toString() +"\n"+"보유시설: "+document.data["Equipment"].toString()
-//                        val markerSnippet =
-//                            "이거되나 : " + "전화번호: " +"\n"+"보유시설: "
-//                          이거 어떻게 넣어도 맨 앞 줄만 나와서 일단 패스. 공원 종류... 이거되나... 이렇게 뒤에 다 줄여짐 xml바꿔봐도 똑같네
-
                         markerOptions.snippet(document.data["snippet"] as String) //공원 종류
-//                        markerOptions.snippet(markerSnippet)
                         markerOptions.position(location) //위치(위도, 경도 값)
                         markerOptions.icon(
                             BitmapDescriptorFactory.defaultMarker(
                                 BitmapDescriptorFactory.HUE_AZURE
                             )
                         )
-                        googleMap.addMarker(markerOptions) //핀 추가
+                        val marker1: Marker? = null //빈 마커 생성
+
+                        //핀 추가하면서 나머지 데이터도 미리 저장해 둔다
+                        val marker_data2 = hashMapOf("phonenum" to document.data["phoneNumber"].toString(), "equip" to document.data["Equipment"].toString())
+                        val marker_data= hashMapOf(marker1 to marker_data2) //마커 안에 전화번호, 편의시설 정보를 숨기기 위한 hashmap
+
+                        googleMap.addMarker(markerOptions)
+//                        googleMap.addMarker(marker_data) //핀 추가
 
                         //해당 핀으로 카메라 이동
                         //아래 코드가 isSBSettingEnabled false 오류를 일으킴
@@ -144,19 +146,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
         }
 
-        //마커 클릭 리스너-마커 클릭하면 카드뷰 나와야 함
+        //마커 클릭 리스너-마커 클릭하면 카드뷰 띄움
         googleMap!!.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener {
             override fun onMarkerClick(marker: Marker): Boolean {
                 card_view.visibility= View.VISIBLE
-                park_name.setText(marker.title.toString())
-                park_what.setText(marker.snippet.toString())
-                card_view.visibility= View.VISIBLE
-                Log.d("parkinfo", "parkname->"+marker.title+"___pakrwhat->")
+                var parkname = findViewById<TextView>(R.id.park_name)
+                var parkwhat = findViewById<TextView>(R.id.park_what)
+                var parkphone = findViewById<TextView>(R.id.phone_num)
+                var parkequip = findViewById<TextView>(R.id.equip)
+                parkname.setText(marker.title)
+                parkwhat.setText(marker.snippet)
+//                Log.d("parkinfo", "parkname->"+marker.title+"___pakrwhat->")
                 return false
             }
         })
 
-        //맵 클릭 리스너-맵 클릭하면 카드뷰 없어져야 함
+        //맵 클릭 리스너-맵 클릭하면 카드뷰 없어짐
         googleMap!!.setOnMapClickListener(object : GoogleMap.OnMapClickListener {
             override fun onMapClick(latLng: LatLng) {
                 card_view.visibility=View.GONE
