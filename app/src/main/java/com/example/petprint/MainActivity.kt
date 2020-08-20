@@ -5,7 +5,9 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -17,7 +19,6 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.cardview.*
 
 /*
 DB의 정보를 이용해 핀 그리기 + 세부정보 표시 + 현재 위치 표시 및 이동
@@ -65,6 +66,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         zoomoutBtn.setOnClickListener {
             map?.animateCamera(CameraUpdateFactory.zoomOut())
         }
+
+        //시작하면 세부 화면은 안 보이게
+        card_view.visibility= View.GONE
     }
 
 
@@ -143,10 +147,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //마커 클릭 리스너-마커 클릭하면 카드뷰 나와야 함
         googleMap!!.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener {
             override fun onMarkerClick(marker: Marker): Boolean {
-                setContentView(R.layout.cardview)
-                park_name.text=
-
-
+                card_view.visibility= View.VISIBLE
+                park_name.setText(marker.title.toString())
+                park_what.setText(marker.snippet.toString())
+                card_view.visibility= View.VISIBLE
+                Log.d("parkinfo", "parkname->"+marker.title+"___pakrwhat->")
                 return false
             }
         })
@@ -154,7 +159,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //맵 클릭 리스너-맵 클릭하면 카드뷰 없어져야 함
         googleMap!!.setOnMapClickListener(object : GoogleMap.OnMapClickListener {
             override fun onMapClick(latLng: LatLng) {
-
+                card_view.visibility=View.GONE
             }
         })
 
@@ -167,7 +172,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 //        uiSettings.isZoomControlsEnabled = true //확대, 축소 버튼
 
     }
-
 
     private fun getDeviceLocation() {
         try {
