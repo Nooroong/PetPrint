@@ -42,8 +42,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val defaultLocation = LatLng(-33.8523341, 151.2106085)
     private var locationPermissionGranted = false
     private var lastKnownLocation: Location? = null
-    private var currentMarker: Marker? = null
-    private var nameMarker: EditText? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -149,7 +147,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //마커 클릭 리스너-마커 클릭하면 카드뷰 나와야 함
         googleMap!!.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener {
             override fun onMarkerClick(marker: Marker): Boolean {
-//                Log.d("aaaa","클릭됨")
+                setContentView(R.layout.cardview)
+                park_name.text=
+
 
                 return false
             }
@@ -158,7 +158,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         //맵 클릭 리스너-맵 클릭하면 카드뷰 없어져야 함
         googleMap!!.setOnMapClickListener(object : GoogleMap.OnMapClickListener {
             override fun onMapClick(latLng: LatLng) {
-                currentMarker = null
+
             }
         })
 
