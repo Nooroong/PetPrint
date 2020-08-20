@@ -1,32 +1,27 @@
 package com.example.petprint
 
-import com.google.android.gms.maps.*
-
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.firebase.firestore.FirebaseFirestore
-
 import android.Manifest
-import android.content.DialogInterface
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.net.PlacesClient
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.cardview.*
 
 /*
 DB의 정보를 이용해 핀 그리기 + 세부정보 표시 + 현재 위치 표시 및 이동
@@ -47,7 +42,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private val defaultLocation = LatLng(-33.8523341, 151.2106085)
     private var locationPermissionGranted = false
     private var lastKnownLocation: Location? = null
-
+    private var currentMarker: Marker? = null
+    private var nameMarker: EditText? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,8 +115,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         ) //매개변수: 위도, 경도
 
                         val markerOptions = MarkerOptions() //핀
-                        markerOptions.title(document.id) //주 내용
-                        markerOptions.snippet(document.data["snippet"] as String) //세부 내용
+                        markerOptions.title(document.id) //공원 이름
+
+                        //val snippet_t = TextView(applicationContext)
+//                        val markerSnippet =
+//                            "공원 종류: " + document.data["snippet"].toString() + "\n" + "전화번호: " + document.data["snippet"].toString() +"\n"+"보유시설: "+document.data["Equipment"].toString()
+//                        val markerSnippet =
+//                            "이거되나 : " + "전화번호: " +"\n"+"보유시설: "
+//                          이거 어떻게 넣어도 맨 앞 줄만 나와서 일단 패스. 공원 종류... 이거되나... 이렇게 뒤에 다 줄여짐 xml바꿔봐도 똑같네
+
+                        markerOptions.snippet(document.data["snippet"] as String) //공원 종류
+//                        markerOptions.snippet(markerSnippet)
                         markerOptions.position(location) //위치(위도, 경도 값)
                         markerOptions.icon(
                             BitmapDescriptorFactory.defaultMarker(
@@ -141,6 +146,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
         }
 
+        //마커 클릭 리스너-마커 클릭하면 카드뷰 나와야 함
+        googleMap!!.setOnMarkerClickListener(object : GoogleMap.OnMarkerClickListener {
+            override fun onMarkerClick(marker: Marker): Boolean {
+//                Log.d("aaaa","클릭됨")
+
+                return false
+            }
+        })
+
+        //맵 클릭 리스너-맵 클릭하면 카드뷰 없어져야 함
+        googleMap!!.setOnMapClickListener(object : GoogleMap.OnMapClickListener {
+            override fun onMapClick(latLng: LatLng) {
+                currentMarker = null
+            }
+        })
 
         getLocationPermission()
         updateLocationUI()
@@ -149,8 +169,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 //        val uiSettings: UiSettings = googleMap.uiSettings
 //        uiSettings.isZoomControlsEnabled = true //확대, 축소 버튼
-    }
 
+    }
 
 
     private fun getDeviceLocation() {
@@ -246,5 +266,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         // Used for selecting the current place.
         private const val M_MAX_ENTRIES = 5
     }
+
+
 }
 
