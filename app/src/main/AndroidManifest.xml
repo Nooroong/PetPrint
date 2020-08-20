@@ -40,7 +40,7 @@
 
         <activity android:name=".DrawRoute" />
         <activity
-            android:name=".WalkingPathActivity"
+            android:name=".CurrentPlace"
             android:label="@string/title_activity_walking_path" />
         <activity android:name=".ExceltoFirestore" />
         <activity android:name=".MainActivity">

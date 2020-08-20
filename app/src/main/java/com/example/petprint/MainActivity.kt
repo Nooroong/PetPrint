@@ -2,14 +2,10 @@ package com.example.petprint
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -29,7 +25,7 @@ DB의 정보를 이용해 핀 그리기 + 세부정보 표시 + 현재 위치 �
 <현재 위치 표시 및 이동>
 https://developers.google.com/maps/documentation/android-sdk/current-place-tutorial (이곳을 참고함)
 WalkingPathActivity.kt의 코드에서 필요한 부분만 가져왔습니다.
-자세한 부분은 WalkingPathActivity.kt를 참고하시면 됩니다.
+자세한 부분은 CurrentPlace.kt를 참고하시면 됩니다.
  */
 
 
@@ -253,7 +249,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
     companion object {
-        private val TAG = WalkingPathActivity::class.java.simpleName
+        private val TAG = CurrentPlace::class.java.simpleName
         private const val DEFAULT_ZOOM = 15
         private const val PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1
 
