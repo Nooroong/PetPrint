@@ -1,11 +1,16 @@
 package com.example.petprint
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
+import android.provider.Settings
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -27,14 +32,17 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.android.libraries.places.api.Places
 import com.google.android.material.navigation.NavigationView
-import java.util.*
-
+import kotlinx.android.synthetic.main.activity_walking_path.*
 
 class WalkingPathActivity : AppCompatActivity(),
     NavigationView.OnNavigationItemSelectedListener,
-    OnMapReadyCallback, ConnectionCallbacks, OnConnectionFailedListener,
-    OnRequestPermissionsResultCallback, LocationListener {
+    OnMapReadyCallback,
+    ConnectionCallbacks,
+    OnConnectionFailedListener,
+    OnRequestPermissionsResultCallback,
+    LocationListener {
     private var mMap: GoogleMap? = null
     private var mGoogleApiClient: GoogleApiClient? = null
     private var mLocationRequest: LocationRequest? = null
@@ -43,27 +51,52 @@ class WalkingPathActivity : AppCompatActivity(),
     private var mPermissionDenied = false
     private val locationManager: LocationManager? = null
     private var mCurrentMarker: Marker? = null
-    private var startLatLng =
-        LatLng(0.0, 0.0) //polyline 시작점
-    private var endLatLng =
-        LatLng(0.0, 0.0) //polyline 끝점
+    private var startLatLng = LatLng(0.0, 0.0) //polyline 시작점
+    private var endLatLng = LatLng(0.0, 0.0) //polyline 끝점
     private var walkState = false //걸음 상태
+    private var min: Int = 0
+    private var sec: Int = 0
+    private var hour: Int = 0
     private val polylines = mutableListOf<Polyline>()
+
+
+    var mHandler: Handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+            // 메세지를 처리하고 또다시 핸들러에 메세지 전달 (1000ms 지연)
+            sendEmptyMessageDelayed(0, 1000)
+
+            sec++
+
+            if (sec >= 60) { //분 증가
+                min++
+                sec = 0
+            }
+            if (min >= 60) { //시 증가
+                hour++
+                min = 0
+            }
+
+            time.text = "$hour : $min : $sec" //텍스트 변경
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_walking_path)
-        //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+
+
         val fab =
             findViewById<View>(R.id.walking_start) as Button
         fab.setOnClickListener {
             changeWalkState() //걸음 상태 변경
         }
+
+
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment!!.getMapAsync(this)
+
         if (mGoogleApiClient == null) {
             mGoogleApiClient = GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -74,21 +107,24 @@ class WalkingPathActivity : AppCompatActivity(),
         createLocationRequest()
     }
 
+
     private fun changeWalkState() {
         if (!walkState) {
             Toast.makeText(applicationContext, "걸음 시작", Toast.LENGTH_SHORT).show()
             walkState = true
             startLatLng = LatLng(
-                mCurrentLocation!!.latitude,
-                mCurrentLocation!!.longitude
-            ) //현재 위치를 시작점으로 설정
+                mCurrentLocation!!.latitude, mCurrentLocation!!.longitude) //현재 위치를 시작점으로 설정
+            walking_start.text = "종료"
+            mHandler.sendEmptyMessage(0)
         } else {
             Toast.makeText(applicationContext, "걸음 종료", Toast.LENGTH_SHORT).show()
             walkState = false
+            walking_start.text = "시작"
+            mHandler.removeMessages(0)
         }
     }
 
-    private fun drawPath() {        //polyline을 그려주는 메소드
+    private fun drawPath() { //polyline을 그려주는 메소드
         val options = PolylineOptions().add(startLatLng).add(endLatLng).width(15f)
             .color(Color.BLACK).geodesic(true)
         polylines.add(mMap!!.addPolyline(options))
@@ -144,18 +180,13 @@ class WalkingPathActivity : AppCompatActivity(),
         mCurrentMarker = mMap!!.addMarker(markerOptions)
         mMap!!.animateCamera(
             CameraUpdateFactory.newLatLngZoom(
-                LatLng(
-                    mCurrentLocation!!.latitude,
-                    mCurrentLocation!!.longitude
-                ), 18f
+                LatLng(mCurrentLocation!!.latitude, mCurrentLocation!!.longitude), 18f
             )
         )
-        if (walkState) {                        //걸음 시작 버튼이 눌렸을 때
-            endLatLng =
-                LatLng(latitude, longtitude) //현재 위치를 끝점으로 설정
+        if (walkState) { //걸음 시작 버튼이 눌렸을 때
+            endLatLng = LatLng(latitude, longtitude) //현재 위치를 끝점으로 설정
             drawPath() //polyline 그리기
-            startLatLng =
-                LatLng(latitude, longtitude) //시작점을 끝점으로 다시 설정
+            startLatLng = LatLng(latitude, longtitude) //시작점을 끝점으로 다시 설정
         }
     }
 
