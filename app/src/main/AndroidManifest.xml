@@ -13,7 +13,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@drawable/dog"
+        android:icon="@drawable/dog_icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -26,7 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SaveData"/>
         <activity android:name=".WalkingRecordActivity"/>
         <activity android:name=".WalkingPathActivity"/>
         <!--
