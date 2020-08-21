@@ -45,6 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <Button
@@ -52,21 +53,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:text="시작하기" />
+                    android:padding="10dp"
+                    android:text="시작하기"
+                    android:textSize="15dp" />
 
                 <Button
                     android:id="@+id/gotowalk"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:text="산책하기" />
+                    android:padding="10dp"
+                    android:text="산책하기"
+                    android:textSize="15dp" />
 
                 <Button
                     android:id="@+id/record"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:text="산책기록" />
+                    android:padding="10dp"
+                    android:text="산책기록"
+                    android:textSize="15dp" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
