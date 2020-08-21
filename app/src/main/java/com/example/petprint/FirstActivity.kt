@@ -14,23 +14,24 @@ class FirstActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_first)
-        val status = NetworkStatus.getConnectivityStatus(applicationContext)
+
 
 
         gotomap.setOnClickListener {
-
+            val status = NetworkStatus.getConnectivityStatus(applicationContext)
             if (status == NetworkStatus.TYPE_NOT_CONNECTED) {
-                Toast.makeText(this, "인터넷에 연결되어 있지 않습니다.\n연결 후 다시 시도해주세요.", Toast.LENGTH_LONG)
+                Toast.makeText(this@FirstActivity, "인터넷에 연결되어 있지 않습니다.\n연결 후 다시 시도해주세요.", Toast.LENGTH_LONG)
                     .show()
             } else {
                 startActivity(Intent(this@FirstActivity, MainActivity::class.java))
-                Toast.makeText(this, "지도 로딩 중", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "지도 로딩 중", Toast.LENGTH_SHORT).show()
             }
         }
 
         gotowalk.setOnClickListener {
+            val status = NetworkStatus.getConnectivityStatus(applicationContext)
             if (status == NetworkStatus.TYPE_NOT_CONNECTED) {
-                Toast.makeText(this, "인터넷에 연결되어 있지 않습니다.\n연결 후 다시 시도해주세요.", Toast.LENGTH_LONG)
+                Toast.makeText(this@FirstActivity, "인터넷에 연결되어 있지 않습니다.\n연결 후 다시 시도해주세요.", Toast.LENGTH_SHORT)
                     .show()
             } else {
                 startActivity(Intent(this@FirstActivity, WalkingPathActivity::class.java))
@@ -38,8 +39,9 @@ class FirstActivity : AppCompatActivity() {
         }
 
         record.setOnClickListener {
+            val status = NetworkStatus.getConnectivityStatus(applicationContext)
             if (status == NetworkStatus.TYPE_NOT_CONNECTED) {
-                Toast.makeText(this, "인터넷에 연결되어 있지 않습니다.\n연결 후 다시 시도해주세요.", Toast.LENGTH_LONG)
+                Toast.makeText(this@FirstActivity, "인터넷에 연결되어 있지 않습니다.\n연결 후 다시 시도해주세요.", Toast.LENGTH_SHORT)
                     .show()
             } else {
                 startActivity(Intent(this@FirstActivity, WalkingRecordActivity::class.java))
