@@ -2,42 +2,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:background="#FFFFFF"
-    >
+    android:paddingLeft="10dp"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/walking_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20dp"
         android:layout_marginBottom="5dp"
-        android:textStyle="bold"
-        />
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/start_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="시작 시각: "
-        android:textSize="15dp"
-        android:textColor="#000000"/>
+        android:textColor="#000000"
+        android:textSize="15dp" />
 
     <TextView
         android:id="@+id/end_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="종료 시각: "
-        android:textSize="15dp"
-        android:textColor="#000000"/>
+        android:textColor="#000000"
+        android:textSize="15dp" />
 
     <TextView
         android:id="@+id/whole_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="총 시간: "
-        android:textSize="15dp"
-        android:textColor="#000000"/>
+        android:textColor="#000000"
+        android:textSize="15dp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -45,7 +45,7 @@
         android:layout_marginTop="13dp"
         android:layout_marginBottom="13dp"
         android:background="#ffffff"
-        android:textColor="#000000"/>
+        android:textColor="#000000" />
 
 
 </LinearLayout>
