@@ -39,13 +39,13 @@
                 android:src="@drawable/walk" />
 
             <TextView
-                android:layout_width="350dp"
-                android:layout_height="247dp"
+                android:layout_width="300dp"
+                android:layout_height="200dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"
                 android:text=" 펫프린트(Petprint)는 pet과  footprint 를 합친 말로 강아지의  발자국을 따라 산책 경로를 탐색하는 앱 입니다. 공공데이터를 기반으로 만들어진 펫프린트를 따라 반려견과 행복한 산책을 시작해보세요 !"
                 android:textColor="#000000"
-                android:textSize="24dp" />
+                android:textSize="20dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
