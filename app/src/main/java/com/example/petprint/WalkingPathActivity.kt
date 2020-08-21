@@ -173,7 +173,7 @@ class WalkingPathActivity : AppCompatActivity(),
     //polyline을 그려주는 메소드. 동작 원리는 잘 모르겠음.(특히 리스트 사용하는 부분)
     private fun drawPath() {
         val options = PolylineOptions().add(startLatLng).add(endLatLng).width(10f)
-            .color(0xFF6e665c.toInt()).geodesic(true)
+            .color(Color.DKGRAY).geodesic(true)
         polylines.add(mMap!!.addPolyline(options))
         mMap!!.moveCamera(CameraUpdateFactory.newLatLngZoom(startLatLng, 18f)) //이동지점으로 계속 카메라가 따라감
     }
