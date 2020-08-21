@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".WalkingRecordActivity">
+    tools:context=".WalkingRecordActivity"
+
+    >
 
     <TextView
         android:layout_width="match_parent"
@@ -13,7 +15,8 @@
         android:padding="17dp"
         android:text="산책 기록"
         android:textColor="#ffffff"
-        android:textSize="25dp" />
+        android:textSize="25dp"
+        />
 
 
     <androidx.recyclerview.widget.RecyclerView

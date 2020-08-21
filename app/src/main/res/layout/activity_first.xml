@@ -5,75 +5,90 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="#FFFFFF"
+    >
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="#FFFFF">
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="70dp"
                 android:layout_gravity="center"
                 android:text="반려동물을 위한 산책로"
                 android:textAlignment="center"
                 android:textColor="#FFFFFF"
-                android:textSize="35dp" />
+                android:background="#EF7D3D"
+                android:padding="15dp"
+                android:textSize="30dp" />
 
 
             <ImageView
                 android:layout_width="300dp"
                 android:layout_height="300dp"
                 android:layout_gravity="center"
-                android:src="@drawable/dog" />
+                android:src="@drawable/walk" />
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="350dp"
+                android:layout_height="247dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="30dp"
                 android:text=" 펫프린트(Petprint)는 pet과  footprint 를 합친 말로 강아지의  발자국을 따라 산책 경로를 탐색하는 앱 입니다. 공공데이터를 기반으로 만들어진 펫프린트를 따라 반려견과 행복한 산책을 시작해보세요 !"
-                android:textColor="#E3E3E3"
-                android:textSize="27dp" />
+                android:textColor="#000000"
+                android:textSize="24dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="15dp"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+
+                >
 
                 <Button
                     android:id="@+id/gotomap"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="0dp"
                     android:padding="10dp"
                     android:text="시작하기"
-                    android:textSize="15dp" />
+                    android:textSize="19dp"
+                    android:background="#EF7D3D"
+                    android:textColor="#FFFFFF"/>
 
                 <Button
                     android:id="@+id/gotowalk"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="27dp"
                     android:padding="10dp"
                     android:text="산책하기"
-                    android:textSize="15dp" />
+                    android:textSize="19dp"
+                    android:background="#EF7D3D"
+                    android:textColor="#FFFFFF"
+                    />
 
                 <Button
                     android:id="@+id/record"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
+                    android:layout_marginLeft="28dp"
                     android:padding="10dp"
                     android:text="산책기록"
-                    android:textSize="15dp" />
+                    android:textSize="19dp"
+                    android:background="#EF7D3D"
+                    android:textColor="#FFFFFF"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
