@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -132,19 +131,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                                 BitmapDescriptorFactory.HUE_AZURE
                             )
                         )
-                        val marker1: Marker? = null //빈 마커 생성
+
 
                         //핀 추가하면서 나머지 데이터도 미리 저장해 둔다
-                        val marker_data2 = hashMapOf(
-                            "phonenum" to document.data["phoneNumber"].toString(),
-                            "equip" to document.data["Equipment"].toString()
-                        )
-                        val marker_data =
-                            hashMapOf(marker1 to marker_data2) //마커 안에 전화번호, 편의시설 정보를 숨기기 위한 hashmap
+//                        val marker_data2 = hashMapOf(
+//                            "phonenum" to document.data["phoneNumber"].toString(),
+//                            "equip" to document.data["Equipment"].toString()
+//                        )
+//                        val marker_data =
+//                            hashMapOf(marker1 to marker_data2) //마커 안에 전화번호, 편의시설 정보를 숨기기 위한 hashmap
 
-                        googleMap.addMarker(markerOptions)
-//                        googleMap.addMarker(marker_data) //핀 추가
 
+                        //refer의 마커 정보 추가 부분 참고(링크 있음)
+                        val marker: Marker = googleMap.addMarker(markerOptions) //핀 추가 및 마커 생성
+                        marker.tag =
+                            document.data["address(lot)"] as String + "/" +
+                            document.data["address(road)"] as String + "/" +
+                            document.data["phoneNumber"] as String + "/" +
+                            document.data["Equipment"] as String
+                        Log.d("tkdtpwjdqh", document.data["address(lot)"] as String)
                         //해당 핀으로 카메라 이동
                         //아래 코드가 isSBSettingEnabled false 오류를 일으킴
                         //for문을 통해 여러번 실행하면 안 되는 듯
@@ -178,10 +183,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 card_view.visibility = View.VISIBLE
                 var parkname = findViewById<TextView>(R.id.park_name)
                 var parkwhat = findViewById<TextView>(R.id.park_what)
+                var parkadd1 = findViewById<TextView>(R.id.park_add_lot)
+                var parkadd2 = findViewById<TextView>(R.id.park_add_road)
                 var parkphone = findViewById<TextView>(R.id.phone_num)
                 var parkequip = findViewById<TextView>(R.id.equip)
-                parkname.setText(marker.title)
-                parkwhat.setText(marker.snippet)
+                var arr = marker.tag.toString().split("/") //마커에 붙인 태그
+                parkname.text = marker.title
+                parkwhat.text = marker.snippet
+                parkadd1.text = arr[0]
+                parkadd2.text = arr[1]
+                parkphone.text = arr[2]
+                parkequip.text = arr[3]
 //                Log.d("parkinfo", "parkname->"+marker.title+"___pakrwhat->")
                 return false
             }

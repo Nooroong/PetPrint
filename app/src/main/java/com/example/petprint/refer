@@ -19,6 +19,16 @@ https://nittaku.tistory.com/69 (함수 설명. 한국어)
 
 https://developers.google.com/maps/documentation/android-sdk/location?hl=ko (위치 정보)
 
+*마커에 정보 추가
+https://www.codota.com/code/java/methods/com.google.android.gms.maps.model.Marker/setTag
+MarkerOptions markerOptions = new MarkerOptions()
+              .position(position)
+              .title(placeName);
+          Marker marker = map.addMarker(markerOptions);
+          marker.setTag(place);
+
+https://www.codota.com/code/java/methods/com.google.android.gms.maps.model.Marker/getTag
+
 
 *이동 경로 그리기
 https://jinseongsoft.tistory.com/23
